@@ -6,9 +6,9 @@ const app = express()
 
 app.use("/api/places",placeRouter);
 
-app.use((erorr ,req,res,next)=>{
+app.use((error ,req,res,next)=>{
     if(res.headerSent){
-       return next(erorr);
+       return next(error);
     }
 
     else{

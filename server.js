@@ -1,8 +1,11 @@
 import express from "express"
 import placeRouter from "./routes/place.route.js"
+import bodyParser from "body-parser";
 // import bodyParser from "body-parser"
 
 const app = express()
+
+app.use(bodyParser.json());
 
 app.use("/api/places",placeRouter);
 
@@ -12,7 +15,7 @@ app.use((error ,req,res,next)=>{
     }
 
     else{
-      res.staus(error.code|| 500);
+      res.status(error.code|| 500);
       res.message(error.message || "garbage error")
 
     }

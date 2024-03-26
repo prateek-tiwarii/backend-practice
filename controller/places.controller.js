@@ -1,6 +1,6 @@
 
 
-import HttpError from "../models/https-error";
+import HttpError from "../models/https-error.js";
 
 
 const Dummy_place = [
@@ -47,6 +47,25 @@ const getPlaceByUserId = (req,res,next)=>{
     res.json({user})
 }
 
-const exportDefault = {getPlaceById,getPlaceByUserId};
+const createPlace = (req,res,next)=>{
+    const {id , location , place, coordinates , creator} = req.body
+
+    const createdPlace = {
+        id,
+        location,
+        place,
+        loc : coordinates,
+        creator
+
+    }
+
+    Dummy_place.push(createdPlace);
+
+    res.status(201).json({place : createdPlace});
+
+
+}
+
+const exportDefault = {getPlaceById,getPlaceByUserId,createPlace};
 
 export default exportDefault;

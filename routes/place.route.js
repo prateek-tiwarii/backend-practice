@@ -1,5 +1,7 @@
 import express from "express";
 import { Router } from "express";
+
+import HttpError from "../models/https-error";
  
  const router =  Router();
 
@@ -23,9 +25,14 @@ router.get('/:pid', (req,res,next)=>{
     const place =  Dummy_place.find(p=>{
        return  p.id === pLaceId;
     }); 
-
-
+    
+    if(!place){
+       throw new HttpError("something went wrong", 404)
+    }
+    else{
+ 
     res.json({place});
+    }
 
 })
 
@@ -35,7 +42,10 @@ router.get('/users/:uid',(req,res,next)=>{
     const user = Dummy_place.find(u=>{
         return u.creator === userId;
     });
-
+      if(!user){
+        throw new HttpError("some thing went wrong", 404);
+        
+      }
     res.json({user})
 })
 export default router;

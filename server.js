@@ -6,6 +6,18 @@ const app = express()
 
 app.use("/api/places",placeRouter);
 
+app.use((erorr ,req,res,next)=>{
+    if(res.headerSent){
+       return next(erorr);
+    }
+
+    else{
+      res.staus(error.code|| 500);
+      res.message(error.message || "garbage error")
+
+    }
+})
+
 
 app.listen(8000,(req,res)=>{
     console.log("server is running ")

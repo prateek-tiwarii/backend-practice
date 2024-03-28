@@ -33,9 +33,9 @@ const getPlaceById = (req,res,next)=>{
     }
 }
 
- const getPlaceByUserId = (req,res,next)=>{
+ const getPlacesByUserId = (req,res,next)=>{
     const userId  = req.params.uid
-    const user = Dummy_place.find(u=>{
+    const user = Dummy_place.filter(u=>{
         return u.creator === userId;
     });
       if(!user){
@@ -95,5 +95,5 @@ const getPlaceById = (req,res,next)=>{
 
 
 
- export {getPlaceById,getPlaceByUserId,createPlace , updatePlaceById, deletePlace , Dummy_place};
+ export {getPlaceById,getPlacesByUserId,createPlace , updatePlaceById, deletePlace , };
 

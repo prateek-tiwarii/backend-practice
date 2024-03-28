@@ -80,13 +80,21 @@ const getPlaceById = (req,res,next)=>{
 
  const updatePlaceById = (req,res,next)=>{
     const placeId = req.params.pid;
-    const { location , address} = req.body
+
+    const errors = validationResult(req);
+
+    if(!errors.isEmpty()){
+     console.log(errors);
+     throw new HttpError("please enter all fields carefully", 422);
+    }
+    
+    const { title , description} = req.body
 
     const updatePlace = {...Dummy_place.find(p=>{p.id === placeId})}
     const placeIndex = Dummy_place.findIndex(p=>p.id===placeId);
 
-    updatePlace.location = location;
-    updatePlace.address = address;
+    updatePlace.title = title;
+    updatePlace.description = description;
 
     Dummy_place[placeIndex]  = updatePlace;
 

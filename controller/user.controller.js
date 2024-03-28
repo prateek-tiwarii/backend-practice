@@ -1,5 +1,5 @@
 import { v4 as uuid } from 'uuid';
-
+import { validationResult } from 'express-validator';
 import HttpError from "../models/https-error.js"
 import { express } from 'express';
 
@@ -23,6 +23,7 @@ const retrieveUsers = (req,res,next)=>{
 
 
 const loginUser = (req,res,next) =>{
+  
   const {email , password} = req.body;
 
   const identifyUser = DummyData.find(u=>{
@@ -41,6 +42,15 @@ const loginUser = (req,res,next) =>{
 
 
 const createNewUser = (req,res,next) =>{
+
+  const errors = validationResult(req);
+
+  if(!errors.isEmpty()){
+   console.log(errors);
+   throw new HttpError("invalid input", 422);
+  }
+
+
   const { name ,  email , password} = req.body;
    
   const alreadyUser = DummyData.find(u=>{

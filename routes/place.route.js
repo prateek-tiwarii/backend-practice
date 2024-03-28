@@ -21,8 +21,10 @@ check('addrress').notEmpty()
 ],createPlace);
 
 router.patch('/:pid',[
-    check('address').notEmpty(),
-    
+    check('title').notEmpty(),
+    check('description').isLength({min:5}),
+
+
 ],updatePlaceById );
 
 router.delete("/:pid",deletePlace)

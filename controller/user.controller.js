@@ -41,12 +41,19 @@ const loginUser = (req,res,next) =>{
 
 
 const createNewUser = (req,res,next) =>{
-  const { name , phone , email , password} = req.body;
+  const { name ,  email , password} = req.body;
+   
+  const alreadyUser = DummyData.find(u=>{
+    u.email === email
+  })
+    
+  if(alreadyUser){
+    throw new HttpError("email already in use",401)
 
+  }
   const createdUser = {
     id : uuid(),
     name,
-    phone,
     email,
     password
   }

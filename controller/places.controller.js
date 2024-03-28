@@ -1,17 +1,23 @@
 import HttpError from "../models/https-error.js";
+import { v4 as uuid } from 'uuid';
+
+import { validationResult } from "express-validator";
 
 
 const Dummy_place = [
     {
         id: "1",
-        location : "usa",
-        place: "empire states buildind",
-        loc:{
+        title: "berkshire hathway",
+        description : "this is a good desc",
+        
+        address: "empire states buildind",
+        location:{
                 lat: "550:7800"
             ,
                 log: "0000.1111.222"
             
         },
+
         creator:"luv"
     }
  ]
@@ -46,13 +52,21 @@ const getPlaceById = (req,res,next)=>{
 }
 
  const createPlace = (req,res,next)=>{
-    const {id , location , place, coordinates , creator} = req.body
+   const errors = validationResult(req);
+
+   if(!errors.isEmpty()){
+    console.log(errors);
+    throw new HttpError("please enter all fields carefully", 422);
+   }
+
+    const {title , description , address , coordinates , creator} = req.body
 
     const createdPlace = {
-        id,
-        location,
-        place,
-        loc : coordinates,
+        id : uuid(),
+        title,
+        description,
+        address,
+        location : coordinates,
         creator
 
     }
@@ -66,13 +80,13 @@ const getPlaceById = (req,res,next)=>{
 
  const updatePlaceById = (req,res,next)=>{
     const placeId = req.params.pid;
-    const { location , place} = req.body
+    const { location , address} = req.body
 
     const updatePlace = {...Dummy_place.find(p=>{p.id === placeId})}
     const placeIndex = Dummy_place.findIndex(p=>p.id===placeId);
 
     updatePlace.location = location;
-    updatePlace.place = place;
+    updatePlace.address = address;
 
     Dummy_place[placeIndex]  = updatePlace;
 

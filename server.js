@@ -19,12 +19,10 @@ app.use((error ,req,res,next)=>{
     if(res.headerSent){
        return next(error);
     }
-
-    else{
       res.status(error.code|| 500);
-      res.message(error.message || "garbage error")
+      res.json({message:error.message || "an unknown error occured"});
 
-    }
+    
 })
 
 

@@ -33,7 +33,7 @@ const getPlaceById = (req,res,next)=>{
     }
 }
 
-const getPlaceByUserId = (req,res,next)=>{
+ const getPlaceByUserId = (req,res,next)=>{
     const userId  = req.params.uid
     const user = Dummy_place.find(u=>{
         return u.creator === userId;
@@ -45,7 +45,7 @@ const getPlaceByUserId = (req,res,next)=>{
     res.json({user})
 }
 
-const createPlace = (req,res,next)=>{
+ const createPlace = (req,res,next)=>{
     const {id , location , place, coordinates , creator} = req.body
 
     const createdPlace = {
@@ -64,7 +64,7 @@ const createPlace = (req,res,next)=>{
 
 }
 
-const updatePlaceById = (req,res,next)=>{
+ const updatePlaceById = (req,res,next)=>{
     const placeId = req.params.pid;
     const { location , place} = req.body
 
@@ -79,10 +79,21 @@ const updatePlaceById = (req,res,next)=>{
     res.status(200).json({message:"the data has been updated"});
 
 
+    }
+
+     const deletePlace = (req,res,next)=>{
+        const placeId = req.params.pid;
+
+        Dummy_place = Dummy_place.filter(p=>{
+            p.id ==! placeId
+        })
+
+        res.status(200).json({message:"data deleted sucessfully"})
+
 
     }
 
 
-const exportDefault = {getPlaceById,getPlaceByUserId,createPlace , updatePlaceById};
 
-export default exportDefault;
+ export {getPlaceById,getPlaceByUserId,createPlace , updatePlaceById, deletePlace , Dummy_place};
+

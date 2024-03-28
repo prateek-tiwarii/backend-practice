@@ -3,10 +3,12 @@ import { Router } from "express";
 import exportDefault from "../controller/places.controller.js";
 import HttpError from "../models/https-error.js";
  
- const router =  Router();
+const router =  Router();
 
 router.get('/:pid', exportDefault.getPlaceById);
 router.get('/users/:uid', exportDefault.getPlaceByUserId);
 
-router.post('/',exportDefault.createPlace)
+router.post('/',exportDefault.createPlace);
+
+router.patch('/:pid',exportDefault.updatePlaceById );
 export default router;

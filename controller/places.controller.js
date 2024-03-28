@@ -1,5 +1,3 @@
-
-
 import HttpError from "../models/https-error.js";
 
 
@@ -66,6 +64,25 @@ const createPlace = (req,res,next)=>{
 
 }
 
-const exportDefault = {getPlaceById,getPlaceByUserId,createPlace};
+const updatePlaceById = (req,res,next)=>{
+    const placeId = req.params.pid;
+    const { location , place} = req.body
+
+    const updatePlace = {...Dummy_place.find(p=>{p.id === placeId})}
+    const placeIndex = Dummy_place.findIndex(p=>p.id===placeId);
+
+    updatePlace.location = location;
+    updatePlace.place = place;
+
+    Dummy_place[placeIndex]  = updatePlace;
+
+    res.status(200).json({message:"the data has been updated"});
+
+
+
+    }
+
+
+const exportDefault = {getPlaceById,getPlaceByUserId,createPlace , updatePlaceById};
 
 export default exportDefault;

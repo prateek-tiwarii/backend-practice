@@ -1,6 +1,6 @@
 import HttpError from "../models/https-error.js";
 import { v4 as uuid } from 'uuid';
-
+import { geoLocation } from "../utils/geo.location.js";
 import { validationResult } from "express-validator";
 
 
@@ -12,11 +12,10 @@ const Dummy_place = [
         
         address: "empire states buildind",
         location:{
-                lat: "550:7800"
-            ,
-                log: "0000.1111.222"
-            
-        },
+            lat: "18.922064"
+        ,
+            log: "72.834641"
+     },
 
         creator:"luv"
     }
@@ -51,22 +50,26 @@ const getPlaceById = (req,res,next)=>{
     res.json({user})
 }
 
- const createPlace = (req,res,next)=>{
+ const createPlace = async(req,res,next)=>{
    const errors = validationResult(req);
 
    if(!errors.isEmpty()){
     console.log(errors);
-    throw new HttpError("please enter all fields carefully", 422);
+      return next (new HttpError("please enter all fields carefully", 422));
+
    }
 
-    const {title , description , address , coordinates , creator} = req.body
+    const {title , description , address  , creator} = req.body
+
+       let coordinates = geoLocation(address);
+
 
     const createdPlace = {
         id : uuid(),
         title,
         description,
         address,
-        location : coordinates,
+        location : coordinates ,
         creator
 
     }

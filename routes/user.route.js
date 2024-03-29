@@ -9,7 +9,7 @@ const router = Router();
 
 router.get("/",retrieveUsers)
 
-router.post("/signup"[
+router.post("/signup",[
     check('email').normalizeEmail().isEmail(),
     check('password').isLength({min:6}),
     check('name').notEmpty(),

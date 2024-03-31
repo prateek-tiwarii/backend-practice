@@ -4,6 +4,8 @@ import bodyParser from "body-parser";
 import HttpError from "./models/https-error.js";
 import userRouter from "./routes/user.route.js"
 import mongoose from "mongoose";
+import 'dotenv/config';
+
 
 
 const app = express()
@@ -31,7 +33,7 @@ app.use((error ,req,res,next)=>{
 })
 
 
-mongoose.connect().then(
+mongoose.connect(process.env.mongoDbUri).then(
   app.listen(8000,(req,res)=>{
     console.log("server is running ")
 })

@@ -3,8 +3,8 @@ import placeRouter from "./routes/place.route.js"
 import bodyParser from "body-parser";
 import HttpError from "./models/https-error.js";
 import userRouter from "./routes/user.route.js"
+import mongoose from "mongoose";
 
-// import bodyParser from "body-parser"
 
 const app = express()
 
@@ -31,6 +31,11 @@ app.use((error ,req,res,next)=>{
 })
 
 
-app.listen(8000,(req,res)=>{
+mongoose.connect().then(
+  app.listen(8000,(req,res)=>{
     console.log("server is running ")
 })
+).catch((e)=>{
+   console.log(e);
+})
+

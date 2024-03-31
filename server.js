@@ -33,7 +33,7 @@ app.use((error ,req,res,next)=>{
 })
 
 
-mongoose.connect(process.env.mongoDbUri).then(
+mongoose.connect(`${process.env.mongoDbUri}`).then(
   app.listen(8000,(req,res)=>{
     console.log("server is running ")
 })

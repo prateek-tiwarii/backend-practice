@@ -2,6 +2,7 @@ import HttpError from "../models/https-error.js";
 import { v4 as uuid } from 'uuid';
 import { geoLocation } from "../utils/geo.location.js";
 import { validationResult } from "express-validator";
+import { Place } from "../models/place.model.js";
 
 
 const Dummy_place = [
@@ -64,17 +65,24 @@ const getPlaceById = (req,res,next)=>{
        let coordinates = geoLocation(address);
 
 
-    const createdPlace = {
-        id : uuid(),
+    const createdPlace = new Place({
         title,
-        description,
         address,
-        location : coordinates ,
-        creator
+        description,
+        location : coordinates,
+        image: "https://picsum.photos/200",
+        creator,
+        
+    })
 
+    // Dummy_place.push(createdPlace);
+
+    try {
+        await createdPlace.save()
+    } catch (error) {
+        const Error = new HttpError("creation failed please try again",500);
+        return next(Error);
     }
-
-    Dummy_place.push(createdPlace);
 
     res.status(201).json({place : createdPlace});
 

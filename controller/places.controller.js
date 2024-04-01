@@ -29,7 +29,7 @@ const getPlaceById = async(req,res,next)=>{
     const pLaceId = req.params.pid
 
     let place;
-    
+
 
     try {
 
@@ -37,31 +37,41 @@ const getPlaceById = async(req,res,next)=>{
 
     } catch (error) {
         
-        const Error = new HttpError("provided if doesnt exist",404);
+        const Error =  new HttpError("something went wrong", 500);
         return next(Error);
     }
 
     
     
     if(!place){
-       throw new HttpError("something went wrong", 404)
+       const Error =  new HttpError("provided if doesnt exist",404);
+
+       return next (Error);
     }
     else{
  
-    res.json({place});
+    res.json({place : place.toObject({getters:true})});
     }
 }
 
- const getPlacesByUserId = (req,res,next)=>{
+ const getPlacesByUserId = async(req,res,next)=>{
     const userId  = req.params.uid
-    const user = Dummy_place.filter(u=>{
-        return u.creator === userId;
-    });
+
+     let user 
+
+     try {
+        user = await Place.find({creator:userId});
+     } catch (error) {
+        const Error = new HttpError("something went wrong",500);
+        return next(Error);
+     }
+     
+
+
       if(!user){
-        throw new HttpError("some thing went wrong", 404);
-        
-      }
-    res.json({user})
+        throw new HttpError("user can not be found", 404);
+          }
+    res.json({user: user.map(u=>u.toObject({getters:true}))})
 }
 
  const createPlace = async(req,res,next)=>{
@@ -91,7 +101,7 @@ const getPlaceById = async(req,res,next)=>{
     // Dummy_place.push(createdPlace);
 
     try {
-        await createdPlace.save()
+      await createdPlace.save()
     } catch (error) {
         const Error = new HttpError("creation failed please try again",500);
         return next(Error);

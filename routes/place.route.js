@@ -16,7 +16,7 @@ router.post('/',[
 
 check('title').notEmpty(),
 check('description').isLength({min:5}),
-check('addrress').notEmpty()
+check('address').notEmpty()
 
 ],createPlace);
 

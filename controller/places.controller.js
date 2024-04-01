@@ -3,6 +3,7 @@ import { v4 as uuid } from 'uuid';
 import { geoLocation } from "../utils/geo.location.js";
 import { validationResult } from "express-validator";
 import { Place } from "../models/place.model.js";
+import mongoose from "mongoose";
 
 
 const Dummy_place = [
@@ -24,11 +25,23 @@ const Dummy_place = [
 
 
 
-const getPlaceById = (req,res,next)=>{
+const getPlaceById = async(req,res,next)=>{
     const pLaceId = req.params.pid
-    const place =  Dummy_place.find(p=>{
-       return  p.id === pLaceId;
-    }); 
+
+    let place;
+    
+
+    try {
+
+         place =  await Place.findById(pLaceId)
+
+    } catch (error) {
+        
+        const Error = new HttpError("provided if doesnt exist",404);
+        return next(Error);
+    }
+
+    
     
     if(!place){
        throw new HttpError("something went wrong", 404)

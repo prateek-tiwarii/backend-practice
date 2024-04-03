@@ -5,25 +5,6 @@ import { Place } from "../models/place.model.js";
 import mongoose from "mongoose";
 
 
-const Dummy_place = [
-    {
-        id: "1",
-        title: "berkshire hathway",
-        description : "this is a good desc",
-        
-        address: "empire states buildind",
-        location:{
-            lat: "18.922064"
-        ,
-            log: "72.834641"
-     },
-
-        creator:"luv"
-    }
- ]
-
-
-
 const getPlaceById = async(req,res,next)=>{
     const pLaceId = req.params.pid
 
@@ -164,30 +145,42 @@ try {
 }
 
 
-
-    // const updatePlace = {...Dummy_place.find(p=>{p.id === placeId})}
-    // const placeIndex = Dummy_place.findIndex(p=>p.id===placeId);
-
-    // updatePlace.title = title;
-    // updatePlace.description = description;
-
-    // Dummy_place[placeIndex]  = updatePlace;
-
-    
-
     res.status(200).json({place:place.toObject({getters:true})});
 
 
     }
 
-     const deletePlace = (req,res,next)=>{
+     const deletePlace = async (req,res,next)=>{
         const placeId = req.params.pid;
 
-        Dummy_place = Dummy_place.filter(p=>{
-            p.id ==! placeId
-        })
+       let place;
+       
+       try {
+        place = await Place.findById(placeId);
+       } catch (error) {
+        console.error(error.message);
 
-        res.status(200).json({message:"data deleted sucessfully"})
+        const Error = new HttpError("Something went wrong ",500);
+
+        return next(Error);
+       }
+
+
+       try {
+        await place.remove()
+       } catch (error) {
+
+        console.error(error.message);
+        const Error = new HttpError("something went wrong ",500);
+        return next(Error);
+       }
+
+
+
+         
+
+        res.status(200).json({place:place.toObject({getters:true})});
+
 
 
     }

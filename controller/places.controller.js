@@ -1,5 +1,4 @@
 import HttpError from "../models/https-error.js";
-import { v4 as uuid } from 'uuid';
 import { geoLocation } from "../utils/geo.location.js";
 import { validationResult } from "express-validator";
 import { Place } from "../models/place.model.js";
@@ -85,7 +84,23 @@ const getPlaceById = async(req,res,next)=>{
 
     const {title , description , address  , creator} = req.body
 
-       let coordinates = geoLocation(address);
+    let coordinates;
+
+
+try {
+    coordinates =  geoLocation(address);
+
+} catch (error) {
+
+    console.error(error.message);
+
+    const Error = new HttpError("location can not be fetched",400);
+
+    return next(Error);
+    
+}
+
+       
 
 
     const createdPlace = new Place({
@@ -98,7 +113,7 @@ const getPlaceById = async(req,res,next)=>{
         
     })
 
-    // Dummy_place.push(createdPlace);
+    
 
     try {
       await createdPlace.save()
@@ -112,7 +127,7 @@ const getPlaceById = async(req,res,next)=>{
 
 }
 
- const updatePlaceById = (req,res,next)=>{
+ const updatePlaceById = async (req,res,next)=>{
     const placeId = req.params.pid;
 
     const errors = validationResult(req);
@@ -124,15 +139,43 @@ const getPlaceById = async(req,res,next)=>{
     
     const { title , description} = req.body
 
-    const updatePlace = {...Dummy_place.find(p=>{p.id === placeId})}
-    const placeIndex = Dummy_place.findIndex(p=>p.id===placeId);
+let place;
 
-    updatePlace.title = title;
-    updatePlace.description = description;
+try {
+    place = await Place.findById(placeId)
+} catch (error) {
+    console.error(error.message);
 
-    Dummy_place[placeIndex]  = updatePlace;
+    const Error = new HttpError("place could not be found ",400);
 
-    res.status(200).json({message:"the data has been updated"});
+    return next(Error);
+}
+
+place.title = title,
+place.description = description;
+
+try {
+    await place.save();
+} catch (error) {
+    console.error(error.message);
+    const Error = new HttpError("place could not be updated",500);
+
+    return next(Error);
+}
+
+
+
+    // const updatePlace = {...Dummy_place.find(p=>{p.id === placeId})}
+    // const placeIndex = Dummy_place.findIndex(p=>p.id===placeId);
+
+    // updatePlace.title = title;
+    // updatePlace.description = description;
+
+    // Dummy_place[placeIndex]  = updatePlace;
+
+    
+
+    res.status(200).json({place:place.toObject({getters:true})});
 
 
     }

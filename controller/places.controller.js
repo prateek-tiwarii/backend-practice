@@ -119,7 +119,7 @@ try {
     try {
       const sess = mongoose.startSession();
       sess.startTransaction()
-      await createPlace.save({session : sess});
+      await createdPlace.save({session : sess});
       User.places.push(createdPlace);
       await User.save({session:sess});
       (await sess).commitTransaction();
@@ -193,8 +193,26 @@ try {
        }
 
 
+       if(!place){
+        const Error = new HttpError("place does not exist",404);
+        return next(Error);
+       }
+
+
+
        try {
-        await place.remove()
+        // 
+
+        const sess = await mongoose.startSession();
+        sess.startTransaction();
+        await place.remove({session:sess});
+        place.creator.places.pull(place);
+        await place.creator.save({session:sess});
+        sess.commitTransaction();
+
+
+
+
        } catch (error) {
 
         console.error(error.message);
@@ -207,9 +225,6 @@ try {
          
 
         res.status(200).json({message:"deletion sucessfull"});
-
-
-
     }
 
 

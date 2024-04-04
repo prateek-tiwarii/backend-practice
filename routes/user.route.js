@@ -13,7 +13,6 @@ router.post("/signup",[
     check('email').normalizeEmail().isEmail(),
     check('password').isLength({min:6}),
     check('name').notEmpty(),
-    check('phone').isLength({min:10 , max:10})
 
 ],createNewUser)
 

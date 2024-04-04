@@ -4,7 +4,6 @@ import { validationResult } from "express-validator";
 import { Place } from "../models/place.model.js";
 import mongoose from "mongoose";
 
-
 const getPlaceById = async(req,res,next)=>{
     const pLaceId = req.params.pid
 
@@ -179,7 +178,7 @@ try {
 
          
 
-        res.status(200).json({place:place.toObject({getters:true})});
+        res.status(200).json({message:"deletion sucessfull"});
 
 
 

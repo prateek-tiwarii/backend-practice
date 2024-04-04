@@ -1,6 +1,7 @@
-import { v4 as uuid } from 'uuid';
 import { validationResult } from 'express-validator';
 import HttpError from "../models/https-error.js"
+import { User } from '../models/user.model.js';
+import { Place } from '../models/place.model.js';
 
  const DummyData = [
 
@@ -13,9 +14,28 @@ import HttpError from "../models/https-error.js"
   }
 ]
 
-const retrieveUsers = (req,res,next)=>{
+const retrieveUsers = async (req,res,next)=>{
+     
 
-     res.status(200).json({users : DummyData});
+
+  let user,
+  try {
+
+    user = await User.find({},"-password");
+    
+  } catch (error) {
+
+    console.error(error.message);
+
+    const Error = new HttpError("something went wrong", 500);
+
+    return next(Error);
+    
+  }
+    
+
+     res.status(201).json({user : user.map({ f=>f.toObject({getters:true})})});
+     
 
 }
 
@@ -40,36 +60,67 @@ const loginUser = (req,res,next) =>{
 
 
 
-const createNewUser = (req,res,next) =>{
+const createNewUser = async(req,res,next) =>{
 
   const errors = validationResult(req);
 
   if(!errors.isEmpty()){
    console.log(errors);
-   throw new HttpError("invalid input", 422);
+   const Error =  new HttpError("invalid input", 422);
+
+   return next(Error);
   }
 
 
-  const { name ,  email , password} = req.body;
+  const { name ,  email , password ,  places} = req.body;
    
-  const alreadyUser = DummyData.find(u=>{
-    u.email === email
-  })
+  let alreadyUser;
+
+
+  try {
+      
+    alreadyUser = await User.findOne({email:email})
+
+  } catch (error) {
+    console.error(error.message);
+
+    const Error = new HttpError("something went wrong",500);
+
+    return next(Error);
+  }
+  
     
   if(alreadyUser){
-    throw new HttpError("email already in use",401)
+    const Error = new HttpError("email already in use",401);
+
+    return next(Error);
 
   }
-  const createdUser = {
-    id : uuid(),
+
+
+  const createdUser = new User({
     name,
     email,
-    password
+    password,
+    image: "https://picsum.photos/200",
+    places,
+  })
+
+  try {
+    await createdUser.save();
+  } catch (error) {
+   
+    console.error(error.message);
+
+    const Error = new HttpError("Something Went Wrong",500);
+
+    return next(Error);
+
   }
 
-  DummyData.push(createdUser);
+  
 
-  res.status(201).json({message:"user created sucessfully"})
+  res.status(201).json({User: createdUser.toObject({getters:true})})
 
 }
 

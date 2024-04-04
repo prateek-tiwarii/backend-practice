@@ -2,7 +2,9 @@ import HttpError from "../models/https-error.js";
 import { geoLocation } from "../utils/geo.location.js";
 import { validationResult } from "express-validator";
 import { Place } from "../models/place.model.js";
+import { User } from "../models/user.model.js";
 import mongoose from "mongoose";
+
 
 const getPlaceById = async(req,res,next)=>{
     const pLaceId = req.params.pid
@@ -93,10 +95,36 @@ try {
         
     })
 
-    
+
+    let user;
 
     try {
-      await createdPlace.save()
+        user = await User.findById(creator);
+    } catch (error) {
+        console.error(error.message);
+
+        const Error = new HttpError("imput user with user id not found",401);
+
+        return next(Error);
+    }
+
+
+    if(!user){
+        const Error = new HttpError("user can not be found",500);
+        return next(Error);
+    }
+    
+
+
+    try {
+      const sess = mongoose.startSession();
+      sess.startTransaction()
+      await createPlace.save({session : sess});
+      User.places.push(createdPlace);
+      await User.save({session:sess});
+      (await sess).commitTransaction();
+      
+
     } catch (error) {
         const Error = new HttpError("creation failed please try again",500);
         return next(Error);
@@ -126,7 +154,7 @@ try {
 } catch (error) {
     console.error(error.message);
 
-    const Error = new HttpError("place could not be found ",400);
+    const Error = new HttpError("could not procced try again",400);
 
     return next(Error);
 }

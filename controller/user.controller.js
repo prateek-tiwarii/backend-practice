@@ -18,7 +18,7 @@ const retrieveUsers = async (req,res,next)=>{
      
 
 
-  let user,
+  let user;
   try {
 
     user = await User.find({},"-password");
@@ -34,22 +34,36 @@ const retrieveUsers = async (req,res,next)=>{
   }
     
 
-     res.status(201).json({user : user.map({ f=>f.toObject({getters:true})})});
+     res.status(201).json({user : user.map(Find=>Find.toObject({getters:true}))});
      
 
 }
 
 
 
-const loginUser = (req,res,next) =>{
+const loginUser = async (req,res,next) =>{
   
-  const {email , password} = req.body;
+  const {email , password} = req.body; 
 
-  const identifyUser = DummyData.find(u=>{
-    u.email === email })
+  let alreadyUser;
 
-    if(!identifyUser || identifyUser.password !==  password){
-        throw new HttpError("invalid request",404)
+  try {
+      
+    alreadyUser = await User.findOne({email:email})
+
+  } catch (error) {
+    console.error(error.message);
+
+    const Error = new HttpError("something went wrong",500);
+
+    return next(Error);
+  }
+
+
+    if(!alreadyUser || alreadyUser.password !==  password){
+       const Error = new HttpError("invalid credential could not logg u in",404)
+
+       return next(Error);
     }
 
     res.status(201).json({message:"logged in sucessfully"})
@@ -72,7 +86,7 @@ const createNewUser = async(req,res,next) =>{
   }
 
 
-  const { name ,  email , password ,  places} = req.body;
+  const { name ,  email , password } = req.body;
    
   let alreadyUser;
 
@@ -103,7 +117,7 @@ const createNewUser = async(req,res,next) =>{
     email,
     password,
     image: "https://picsum.photos/200",
-    places,
+    places :[]
   })
 
   try {

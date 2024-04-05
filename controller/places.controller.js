@@ -183,7 +183,7 @@ try {
        let place;
        
        try {
-        place = await Place.findById(placeId);
+        place = await Place.findById(placeId).populate("creator");
        } catch (error) {
         console.error(error.message);
 
@@ -208,7 +208,7 @@ try {
         await place.remove({session:sess});
         place.creator.places.pull(place);
         await place.creator.save({session:sess});
-        sess.commitTransaction();
+        await sess.commitTransaction();
 
 
 

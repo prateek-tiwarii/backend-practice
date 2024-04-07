@@ -1,6 +1,6 @@
 import React from 'react'
 
-const UserItem = () => {
+const UserItem = props => {
   return (
     <div>
 

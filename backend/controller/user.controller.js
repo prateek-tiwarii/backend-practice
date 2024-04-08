@@ -3,18 +3,10 @@ import HttpError from "../models/https-error.js"
 import { User } from '../models/user.model.js';
 import { Place } from '../models/place.model.js';
 import bcrypt from 'bcryptjs';
+import * as jwt from 'jsonwebtoken';
 
 
- const DummyData = [
 
-  {
-      id: 1,
-      name: "'jshwjhw",
-      phone: "'hswhsj",
-      email: "skjnjksn",
-      password : "jsnjb",
-  }
-]
 
 const retrieveUsers = async (req,res,next)=>{
      
@@ -78,7 +70,10 @@ const loginUser = async (req,res,next) =>{
        return next(Error);
     }
 
-    
+    if(!isValid){
+      const Error =  new HttpError("invalid login credentails",421);
+      return next(Error);
+    }    
 
     res.status(201).json({message:"logged in sucessfully"})
 
@@ -156,6 +151,10 @@ const createNewUser = async(req,res,next) =>{
 
   }
 
+  let token;
+    jwt.sign({userId : createdUser.id , email : createdUser.email}
+      ,process.env.ACCESS_TOKEN_SECRET
+      ,{expiresIn: process.env.ACCESS_TOKEN_EXPIRY})
   
 
   res.status(201).json({User: createdUser.toObject({getters:true})})

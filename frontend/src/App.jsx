@@ -1,4 +1,5 @@
 import {Routes , Route} from "react-router-dom"
+import User from "./users/pages/user"
 
 
 function App() {
@@ -8,13 +9,14 @@ function App() {
     <>
 
     <Routes>
-        <Route path="/" element={}>
+        <Route path="/" element={<User/>}>
         </Route>
       </Routes>
      
     </>
   )
 }
-import { Form } from 'react-router-dom'
+
+
 
 export default App

@@ -2,6 +2,8 @@ import { validationResult } from 'express-validator';
 import HttpError from "../models/https-error.js"
 import { User } from '../models/user.model.js';
 import { Place } from '../models/place.model.js';
+import bcrypt from 'bcryptjs';
+
 
  const DummyData = [
 
@@ -60,11 +62,23 @@ const loginUser = async (req,res,next) =>{
   }
 
 
-    if(!alreadyUser || alreadyUser.password !==  password){
-       const Error = new HttpError("invalid credential could not logg u in",404)
+    if(!alreadyUser){
+       const Error = new HttpError("no user found",404)
 
        return next(Error);
     }
+
+    let isValid = false; 
+
+    try {
+      isValid = await bcrypt.compare(password,alreadyUser.password);
+    } catch (error) {
+      console.error(error.message);
+      const Error = new HttpError("could not process the request try again", 500);
+       return next(Error);
+    }
+
+    
 
     res.status(201).json({message:"logged in sucessfully"})
 
@@ -111,11 +125,21 @@ const createNewUser = async(req,res,next) =>{
 
   }
 
+  let hashedPassword;
+
+  try {
+    hashedPassword = await bcrypt.hash(password,12);
+  } catch (error) {
+   console.error(error.message);
+   const Error = new HttpError("something is wrong with the server " , 500); 
+   return next(Error);
+  }
+
 
   const createdUser = new User({
     name,
     email,
-    password,
+    password : hashedPassword,
     image: "https://picsum.photos/200",
     places :[]
   })

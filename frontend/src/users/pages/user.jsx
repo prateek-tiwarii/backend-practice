@@ -5,14 +5,14 @@ const User = () => {
 
     const USERS = [
         {
-            id : 1,
+            id : "kal3",
             name : "mark zukerberg",
             image : "https://picsum.photos/200",
             places: 3
         }
     ]
   return (
-    <div>
+    <div className='flex justify-center my-3  '>
         <UserList items = {USERS}/>
     </div>
   )

@@ -75,7 +75,28 @@ const loginUser = async (req,res,next) =>{
       return next(Error);
     }    
 
-    res.status(201).json({message:"logged in sucessfully"})
+
+    let token; 
+
+    try {
+
+      token = jwt.sign({userId : alreadyUser.id , email: email}
+        ,process.env.ACCESS_TOKEN_SECRET
+        ,{expiresIn: process.env.ACCESS_TOKEN_EXPIRY}
+      )
+      
+    } catch (error) {
+      
+      console.error(error.message);
+      const Error = new HttpError("token generation failed !! ",500);
+      return next(Error);
+
+    }
+    
+    
+    
+
+    res.status(201).json({userId : alreadyUser.id , email: alreadyUser.email, token:token})
 
 
 
@@ -152,12 +173,20 @@ const createNewUser = async(req,res,next) =>{
   }
 
   let token;
-    jwt.sign({userId : createdUser.id , email : createdUser.email}
+
+  try {
+    token = jwt.sign({userId : createdUser.id , email : createdUser.email}
       ,process.env.ACCESS_TOKEN_SECRET
       ,{expiresIn: process.env.ACCESS_TOKEN_EXPIRY})
   
+  } catch (error) {
+    console.error(error.message);
+    const Error = new HttpError("token creation failed",500);
+    return next(Error);
+  }
+    
 
-  res.status(201).json({User: createdUser.toObject({getters:true})})
+  res.status(201).json({userId :createdUser.id, email : createdUser.email, token : token})
 
 }
 

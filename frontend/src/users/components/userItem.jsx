@@ -6,7 +6,7 @@ import Stack from '@mui/material/Stack';
 
 const UserItem = props => {
   return (
-    <div className='flex border border-black bg-black p-2 rounded-sm hover:bg-yellow-500'>
+    <div className='flex border border-black bg-black p-2 rounded-sm hover:bg-yellow-500 justify-center w-fit mx-auto my-2'>
     <Stack direction="row" spacing={2}>
 
         <div>

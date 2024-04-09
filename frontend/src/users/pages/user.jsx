@@ -1,5 +1,6 @@
 import React from 'react'
 import UserList from '../components/userList'
+import Navbar from '../sections/navbar'
 
 const User = () => {
 
@@ -12,9 +13,12 @@ const User = () => {
         }
     ]
   return (
-    <div className='flex justify-center my-3  '>
+    <div className='  '>
+        
+        <Navbar/>
         <UserList items = {USERS}/>
     </div>
+    
   )
 }
 
